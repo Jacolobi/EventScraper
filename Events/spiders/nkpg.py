@@ -18,7 +18,6 @@ class NkpgSpider(scrapy.Spider):
                 "title": event.attrib["title"],
                 "url": url,
                 "date": event.css("div.vn-search__hit-image-event-date::text").get().strip(),
-                "tags": event.css("div.vn-search__hit-categories::text").getall()[-1].strip().split(", "),
             }
 
             yield response.follow(url, callback=self.parse_detail, cb_kwargs={"item": item})
@@ -44,4 +43,7 @@ class NkpgSpider(scrapy.Spider):
                 break
         item["summary"] = summary
         item["location"] = location
+        item["category"] = None
+        item["requires_booking"] = None
+        item["restricted"] = None
         yield item

@@ -24,6 +24,16 @@ class OrbiSpider(scrapy.Spider):
 
 
     def parse_detail(self, response, item):
-        summary = response.css("section div span::text").get().strip()
+        summary = response.css("section div span::text").getall()
+        summary = " ".join([s.strip() for s in summary if s.strip()])
         item["summary"] = summary
+        item["category"] = None
+        item["requires_booking"] = None
+        item["restricted"] = None
+        requires_booking = response.css(".grid-cols-\[minmax\(0\,1fr\)_auto\] span::text").getall()
+        requires_booking = " ".join([s.strip() for s in requires_booking if s.strip()])
+        if requires_booking.startswith("No tickets required"):
+            item["requires_booking"] = False
+        else:
+            item["requires_booking"] = True
         yield item
